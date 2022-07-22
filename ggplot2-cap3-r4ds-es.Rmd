@@ -1,0 +1,44 @@
+---
+title: "experimentos ggplot2"
+author: "José Cifuentes R"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Visualización de datos
+
+Ejemplos de código del libro **R para ciencia de datos** (<https://es.r4ds.hadley.nz/visualizaci%C3%B3n-de-datos.html>)
+
+```{r load libraries, include=FALSE}
+library(tidyverse)
+library(datos)
+```
+
+Respondamos a la pregunta: ¿los automóviles con motores grandes consumen más combustible que los automóviles con motores pequeños?
+
+```{r}
+millas
+```
+
+Realizamos un gráfico para visualizar el tipo de cilindrada con respecto al rendimiento del vehículo en autopista
+
+```{r}
+ggplot(data =  millas, aes(x = cilindrada, y = autopista)) +
+  geom_point()
+```
+
+```{r}
+ggplot(data = millas) +
+  geom_point(mapping = aes(x = cilindrada, y = autopista))
+```
+
+### Ejercicios
+
+```{r}
+ggplot(data = millas)
+```
+
+### 
