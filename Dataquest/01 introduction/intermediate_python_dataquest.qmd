@@ -219,3 +219,181 @@ for row in moma:
     row[6] = Date
 ```
 ## Python Data Analysis Basics
+Continuaremos con el análisis de datos, pero en esta oportunidad trabajaremos con un archivo que ya tiene los datos limpios. 
+
+Procedemos a cargar el archivo
+
+```{python}
+from csv import reader
+
+# Read the `artworks_clean.csv` file
+opened_file = open('artworks_clean.csv')
+read_file = reader(opened_file)
+moma = list(read_file)
+moma = moma[1:]
+```
+A continuación, vamos a convertir todas fechas de nacimiento no vacías a números enteros. 
+
+
+```{python}
+# Convert the birthdate values
+for row in moma:
+    birth_date = row[3]
+    if birth_date != "":
+        birth_date = int(birth_date)
+    row[3] = birth_date
+```
+Ahora vamos a hacer lo mismo con los años de muerte
+
+```{python}
+for row in moma:
+    death_date = row[4]
+    if death_date != "":
+        death_date = int(death_date)
+    row[4] = death_date
+```
+Analizamos un extracto de la información que están en la columna 6 de nuestro conjunto de datos. 
+
+```{python}
+for row in moma[:5]:
+    print(row[6])
+```
+Se puede apreciar que son años. Vamos a pasar todos estos años a números enteros
+
+```{python}
+for row in moma:
+    date = row[6]
+    if date != "":
+        date = int(date)
+    row[6] = date
+```
+### Calculando la edad de los artistas
+Vamos a proceder a calcular la edad de los artistas
+
+creamos una lista con las edades
+```{python}
+ages = []
+for row in moma:
+    date = row[6]
+    birth = row[3]
+    if isinstance(birth, int):
+        age = date - birth
+    else:
+        age = 0
+    ages.append(age)
+```
+creamos una lista con las edades finales donde dejamos como "Unknown" a las edades que no se pueden determinar (menores de 20 y negativas). 
+
+```{python}
+final_ages = [] 
+for age in ages:
+    if age >= 20:
+        final_ages.append(age)
+    else: 
+        final_ages.append("Unknown")
+```
+
+### Convertir edades a decadas
+
+```{python}
+decades = []
+for age in final_ages:
+    if age == "Unknown":
+        decades.append(age)
+    else: 
+        decade = str(age)[:-1] + "0s"
+        decades.append(decade)
+```
+### Resumiendo los datos
+En esta etapa de nuestro análisis, crearemos una tabla de frecuencias para las décadas de las edades de los artistas. Esto nos permitirá contar cuántas veces aparece cada década en nuestra lista de datos. Para lograrlo, utilizaremos un diccionario en Python donde las claves representarán las décadas y los valores serán la cantidad de veces que aparece cada década en la lista. 
+
+```{python}
+decade_frequency = {}
+for decade in decades:
+    if decade not in decade_frequency:
+        decade_frequency[decade] = 1
+    else:
+        decade_frequency[decade] += 1
+```
+### Insertando variables en cadenas
+
+```{python}
+artist = "Pablo Picasso"
+birth_year = 1881
+print(f"{artist}'s birth year is {birth_year}")
+```
+### Creando una tabla de frecuencias de los artistas
+
+```{python}
+artist_freq = {}
+for row in moma:
+    artist = row[1]
+    if artist not in artist_freq:
+        artist_freq[artist] = 1
+    else: 
+        artist_freq[artist] +=1
+```
+
+```{python}
+print(artist_freq)
+```
+### Función que resume las obras de un artista
+
+
+```{python}
+def artist_summary(name):
+    if name in artist_freq:
+        number_works = artist_freq[name]
+        print(f"There are {number_works} artworks by {name} in the dataset")
+    else: 
+        print("Artist doesn't exists")
+```
+Probamos la función
+
+```{python}
+artist_summary("Henri Matisse")
+```
+### Formateando números dentro de cadenas
+Vamos a dar formato a la información que se encuentra en la siguiente lista: 
+
+```{python}
+pop_millions = [
+    ["China", 1379.302771],
+    ["India", 1281.935991],
+    ["USA",  326.625791],
+    ["Indonesia",  260.580739],
+    ["Brazil",  207.353391],
+]
+```
+Mostramos la información que se presenta en la lista de listas:
+
+```{python}
+for pop in pop_millions:
+    country_name = pop[0]
+    population = pop[1]
+    print(f"The population of {country_name} is {population:,.2f} million")
+``` 
+### Desafío: resumir obras por género
+Creamos una tabla de frecuencias para la variable género
+
+```{python}
+gender_freq = {}
+for row in moma: 
+    gender = row[5]
+    if gender not in gender_freq:
+        gender_freq[gender] = 1
+    else: 
+        gender_freq[gender] += 1
+```
+Mostramos la tabla de frecuencia para el género
+
+```{python}
+print(gender_freq)
+```
+Mostramos un resumen de cantidad de obras por género de los artistas
+
+
+```{python}
+for genero, numero in gender_freq.items():
+    print(f"There are {numero:,} artworks by {genero} artists")
+```
