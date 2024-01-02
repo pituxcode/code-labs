@@ -489,3 +489,28 @@ my_list.append(6)
 
 print(my_list.data)
 ```
+Finalmente, vamos a crear el método *length* para contar los elementos de una lista. Vamos a procurar que cada vez que se agregue un elemento a la lista la variable *length* se incremente en uno. 
+
+
+```{python}
+class MyList:
+
+    def __init__(self, initial_data):
+        self.data = initial_data
+        self.length = 0
+        for item in self.data:
+            self.length += 1
+
+    def append(self, new_item):
+        self.data = self.data + [new_item]
+        self.length += 1
+
+my_list = MyList([1, 1, 2, 3, 5])
+
+print(my_list.length)
+
+my_list.append(8)
+
+print(my_list.length)
+
+```
