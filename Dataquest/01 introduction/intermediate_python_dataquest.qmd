@@ -397,3 +397,95 @@ Mostramos un resumen de cantidad de obras por género de los artistas
 for genero, numero in gender_freq.items():
     print(f"There are {numero:,} artworks by {genero} artists")
 ```
+## Programación orientada a objetos
+In the code editor, we have defined one variable of each of the three types. Follow each of the instructions below, in order.
+
+1. Use the print() function to display the type of the list l.
+2. Use the print() function to display the type of the string s.
+3. Use the print() function to display the type of the dictionary d.
+
+
+```{python}
+l = [1, 2, 3]
+s = "string"
+d = {"a": 1, "b": 2}
+
+print(type(l))
+print(type(s))
+print(type(d))
+```
+1. Define a class named MyClass.
+2. Inside the class definition, add a pass statement to avoid a SyntaxError.
+
+
+```{python}
+class MyClass:
+    pass
+```
+Utiliza el constructor MyClass() para crear una instancia de MyClass. Asigna esta instancia a una variable llamada my_instance.
+
+Utiliza las funciones incorporadas print() y type() para imprimir el tipo de my_instance.
+
+
+```{python}
+my_instance = MyClass()
+print(type(my_instance))
+```
+Utiliza la clase MyClass que se proporcionó anteriormente.
+Elimina la instrucción "pass".
+Dentro de la clase, crea un método llamado "first_method".
+En el método, devuelve la cadena "Este es mi primer método".
+Fuera de la clase, crea una instancia de MyClass y asígnala a una variable llamada "my_instance".
+
+
+```{python}
+class MyClass:
+    def first_method():
+        return "This is my first method"
+
+my_instance = MyClass()
+```
+Vamos a crear una clase y un método que reciba dos argumentos. 
+
+```{python}
+class MyClass:
+    
+    def first_method(self):
+        return "This is my first method"
+    
+    def return_list(self, input_list):
+        return input_list
+
+my_instance = MyClass()
+result = my_instance.return_list([1, 2, 3])
+print(result)
+```
+
+Finalmente, vamos a crear una clases con el método __init__() para inicializar unos atributos. 
+
+```{python}
+class MyList:
+    def __init__(self, initial_data):
+        self.data = initial_data
+
+my_list = MyList([1,2,3,4,5])    
+print(my_list.data)
+```
+A continuación, vamos a crear el método *append* dentro de nuestra clase
+
+```{python}
+class MyList:
+    def __init__(self, initial_data):
+        self.data = initial_data
+    
+    def append(self, new_item):
+        self.data = self.data + [new_item]
+
+my_list = MyList([1, 2, 3, 4, 5])
+
+print(my_list.data)
+
+my_list.append(6)
+
+print(my_list.data)
+```
