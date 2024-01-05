@@ -560,4 +560,28 @@ for row in potus:
     fecha_inicio = row[2]
     row[2] = dt.datetime.strptime(fecha_inicio, date_format)
 ```
-    
+
+A continuación, vamos a hacer una tabla de frecuencias y formatear las fechas usando el método *datetime.strftime()*
+
+
+```{python}
+visitors_per_month = {}
+for row in potus:
+    date = row[2]
+    date = date.strftime("%B, %Y") # se cambia el formato de la fecha
+    if date in visitors_per_month:
+        visitors_per_month[date] += 1
+    else: 
+        visitors_per_month[date] = 1
+```
+
+Ahora vamos a trabajar solo con el método que permite controlar el formato de los tiempos. Vamos a tomar solo las horas del incio de las reuniones y las vamos a guardar en una lista. 
+
+```{python}
+appt_times = []
+
+for row in potus:
+    appt_dt = row[2] # captura en fortmato día y hora
+    appt_t = appt_dt.time() # captura solo el tiempo
+    appt_times.append(appt_t) # envía el tiempo a la lista
+```
