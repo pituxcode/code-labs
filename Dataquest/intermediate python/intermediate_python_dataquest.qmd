@@ -1,0 +1,651 @@
+
+# Python intermedio Dataquest
+
+En este documento se encuentran todos los códigos y análisis del módulo de Python intermedio para obtener la certificación en ciencia de datos. Hola
+
+Los módulos son los siguientes:
+
+-   Cleaning and Preparing Data in Python
+-   Python Data Analysis Basics
+-   Object-Oriented Python
+-   Working with Dates and Times in Python
+-   Guided Project: Exploring Hacker News Posts
+
+## Cleaning and Preparing Data in Python
+
+### Introducción
+
+En este módulo se trabaja con el archivo *artworks.cvs* que tiene información sobre obras de arte.
+
+```{python}
+# carga del archivo con datos
+from csv import reader
+opened_file = open('artworks.csv')
+read_file = reader(opened_file)
+moma = list(read_file)
+moma = moma[1:]
+```
+
+### Reemplazar caracteres y cadenas
+
+Muestra las primeras cinco filas de la lista que tiene la información.
+
+```{python}
+# muestra las primeras cinco filas
+for row in moma[:5]:
+    print(row)
+```
+
+A continuación, se limpian los caracteres *"("* y *")"* que se encuentran en la columna de la nacionalidad
+
+```{python}
+# ejemplo de como se ve la nacionalidad
+for row in moma[:3]:
+    print(row[2])
+```
+
+Limpiamos todos los datos de la columna nacionalidad
+
+```{python}
+for row in moma:
+    nationality = row[2]
+    nationality = nationality.replace("(","")
+    nationality = nationality.replace(")", "")
+    row[2] = nationality
+```
+
+Ahora hacemos lo mismo con la columna género
+
+```{python}
+for row in moma:
+    gender = row[5]
+    gender = gender.replace("(","").replace(")","")
+    row[5] = gender
+```
+
+### Corregir títulos
+En algunas columnas de datos hay información que es necesario corregir porque representan lo mismo, pero no se escribe igual, por ejemplo: Male es lo mismo que male, pero hay que hacer una estandarización para que todas las categorías empiecen con mayúscula, para esto usamos el método *title.*
+
+```{python}
+# string capitalization
+for row in moma:
+    gender = row[5]
+    gender = gender.title()
+    if not gender:
+        gender = "Gender Unknown/Other"
+    row[5] = gender
+
+for row in moma:
+    nationality = row[2]
+    nationality = nationality.title()
+    if not nationality:
+        nationality = "Nationality Unknown"
+    row[2] = nationality
+```
+También,  es importante desarrollar una función que permita limpiar la información relacionada con las fechas. A continuación se presenta un extracto de las fechas que se encuentran en las columnas 3 y 4 respectivamente. 
+
+
+```{python}
+for row in moma[:5]:
+    print(f"fecha inicio: {row[3]}")
+    print(f"fecha final: {row[4]}")
+    print("\n")
+```
+Se puede observar que las fechas están dentro de un paréntesis que tenemos que sacar. Además, el tipo de dato corresponde a una cadena, por tanto, tenemos que pasar los años a números enteros. 
+
+La función que permite desarrollar este procedimiento es la siguiente: 
+
+
+```{python}
+# errors during data cleaning
+def clean_and_convert(date):
+    # check that we don't have an empty string
+    if date != "":
+        # move the rest of the function inside
+        # the if statement
+        date = date.replace("(", "")
+        date = date.replace(")", "")
+        date = int(date)
+    return date
+```
+Ahora podemos aplicar esta función para limpiar los años de inicio y final de las obras que están en las columnas 3 y 4. 
+
+
+```{python}
+for row in moma:
+    BeginDate = row[3]
+    EndDate = row[4]
+    row[3] = clean_and_convert(BeginDate)
+    row[4] = clean_and_convert(EndDate)
+```
+### Quitando caracteres no deseados
+A continuación, vamos a desarrollar un método para eliminar caracteres no deseados que se encuentran en una lista. Para esto definimos dos listas. Una tiene las cadenas que se quieren limpiar y la otra la lista de caracteres que se necesitan remover. 
+
+
+```{python}
+strings = ["good!", "morn?ing", "good?!", "morniZZZZng"]
+bad_chars = ["!", "?", "Z"]
+```
+A conitnuación, crearemos una función que nos permita ver si en las diferentes cadenas de la lista *strings* hay caracteres no deseados. En caso de que sea así, esta función los removerá usando el método *replace*. 
+
+
+```{python}
+def strip_characters(string):
+    for char in bad_chars:
+        string = string.replace(char,"")
+    return string
+```
+
+Después de que hayamos creado la función. Vamos a crear una lista llamada *cleaned_strings* donde guardemos las cadenas corregidas. Finalmente, aplicamos este método usando la misma función. 
+
+
+```{python}
+cleaned_strings = []
+for s in strings:
+    s = strip_characters(s)
+    cleaned_strings.append(s)
+
+print(cleaned_strings)
+```
+Ahora vamos a considerar un extracto del formato que tienen los años en el archivo de datos, esta información la incluimos en la lista *test_data* que se presenta a continuación: 
+
+
+```{python}
+test_data = ["1912", "1929", "1913-1923",
+             "(1951)", "1994", "1934",
+             "c. 1915", "1995", "c. 1912",
+             "(1988)", "2002", "1957-1959",
+             "c. 1955.", "c. 1970's", 
+             "C. 1990-1999"]
+```
+Como se puede observar hay varios caracteres que se deben eliminar. El listado con los caracteres que debemos eliminar los incluimos en la lista: 
+
+
+```{python}
+bad_chars = bad_chars = ["(",")","c","C",".","s","'", " "]
+```
+A conitnuación, hacemos la limpieza de los datos usando la misma técnia que usamos anteriormente. 
+
+
+```{python}
+def strip_characters(string):
+    for char in bad_chars:
+        string = string.replace(char,"")
+    return string
+
+stripped_test_data = []
+
+for s in test_data:
+    s = strip_characters(s)
+    stripped_test_data.append(s)
+
+print(stripped_test_data)
+```
+
+### Corrigiendo fechas con intervalo
+En la salida que muestra las fechas limpias, se observa que hay fechas que están en un intervalo y separadas por guión, por ejemplo: *'1913-1923'*. Esto se debe corregir. 
+
+Vamos a eliminar el guión y poner en el intervalo el promedio de las dos fechas. 
+
+
+```{python}
+# Parsing Numbers from Complex Strings, Part Two
+def process_date(date_string):
+    if "-" in date_string: 
+        date = date_string.split("-")
+        promedio = round((int(date[0]) + int(date[1])) / 2)
+        return promedio
+    else: 
+        date_string = int(date_string)
+        return date_string
+        
+
+processed_test_data = []
+for s in stripped_test_data:
+    s = process_date(s)
+    processed_test_data.append(s)
+
+print(processed_test_data)
+```
+Como se puede apreciar, todos los datos de año se encuentran estandarizados y además corresponden a números enteros. 
+
+Aplicamos este mismo procedimiento al conjunto de datos *moma* para limpiar los datos de las fechas. 
+
+
+```{python}
+for row in moma:
+    Date = row[6]
+    Date = strip_characters(Date)
+    Date = process_date(Date)
+    row[6] = Date
+```
+## Python Data Analysis Basics
+Continuaremos con el análisis de datos, pero en esta oportunidad trabajaremos con un archivo que ya tiene los datos limpios. 
+
+Procedemos a cargar el archivo
+
+```{python}
+from csv import reader
+
+# Read the `artworks_clean.csv` file
+opened_file = open('artworks_clean.csv')
+read_file = reader(opened_file)
+moma = list(read_file)
+moma = moma[1:]
+```
+A continuación, vamos a convertir todas fechas de nacimiento no vacías a números enteros. 
+
+
+```{python}
+# Convert the birthdate values
+for row in moma:
+    birth_date = row[3]
+    if birth_date != "":
+        birth_date = int(birth_date)
+    row[3] = birth_date
+```
+Ahora vamos a hacer lo mismo con los años de muerte
+
+```{python}
+for row in moma:
+    death_date = row[4]
+    if death_date != "":
+        death_date = int(death_date)
+    row[4] = death_date
+```
+Analizamos un extracto de la información que están en la columna 6 de nuestro conjunto de datos. 
+
+```{python}
+for row in moma[:5]:
+    print(row[6])
+```
+Se puede apreciar que son años. Vamos a pasar todos estos años a números enteros
+
+```{python}
+for row in moma:
+    date = row[6]
+    if date != "":
+        date = int(date)
+    row[6] = date
+```
+### Calculando la edad de los artistas
+Vamos a proceder a calcular la edad de los artistas
+
+creamos una lista con las edades
+```{python}
+ages = []
+for row in moma:
+    date = row[6]
+    birth = row[3]
+    if isinstance(birth, int):
+        age = date - birth
+    else:
+        age = 0
+    ages.append(age)
+```
+creamos una lista con las edades finales donde dejamos como "Unknown" a las edades que no se pueden determinar (menores de 20 y negativas). 
+
+```{python}
+final_ages = [] 
+for age in ages:
+    if age >= 20:
+        final_ages.append(age)
+    else: 
+        final_ages.append("Unknown")
+```
+
+### Convertir edades a decadas
+
+```{python}
+decades = []
+for age in final_ages:
+    if age == "Unknown":
+        decades.append(age)
+    else: 
+        decade = str(age)[:-1] + "0s"
+        decades.append(decade)
+```
+### Resumiendo los datos
+En esta etapa de nuestro análisis, crearemos una tabla de frecuencias para las décadas de las edades de los artistas. Esto nos permitirá contar cuántas veces aparece cada década en nuestra lista de datos. Para lograrlo, utilizaremos un diccionario en Python donde las claves representarán las décadas y los valores serán la cantidad de veces que aparece cada década en la lista. 
+
+```{python}
+decade_frequency = {}
+for decade in decades:
+    if decade not in decade_frequency:
+        decade_frequency[decade] = 1
+    else:
+        decade_frequency[decade] += 1
+```
+### Insertando variables en cadenas
+
+```{python}
+artist = "Pablo Picasso"
+birth_year = 1881
+print(f"{artist}'s birth year is {birth_year}")
+```
+### Creando una tabla de frecuencias de los artistas
+
+```{python}
+artist_freq = {}
+for row in moma:
+    artist = row[1]
+    if artist not in artist_freq:
+        artist_freq[artist] = 1
+    else: 
+        artist_freq[artist] +=1
+```
+
+
+### Función que resume las obras de un artista
+
+
+```{python}
+def artist_summary(name):
+    if name in artist_freq:
+        number_works = artist_freq[name]
+        print(f"There are {number_works} artworks by {name} in the dataset")
+    else: 
+        print("Artist doesn't exists")
+```
+Probamos la función
+
+```{python}
+artist_summary("Henri Matisse")
+```
+### Formateando números dentro de cadenas
+Vamos a dar formato a la información que se encuentra en la siguiente lista: 
+
+```{python}
+pop_millions = [
+    ["China", 1379.302771],
+    ["India", 1281.935991],
+    ["USA",  326.625791],
+    ["Indonesia",  260.580739],
+    ["Brazil",  207.353391],
+]
+```
+Mostramos la información que se presenta en la lista de listas:
+
+```{python}
+for pop in pop_millions:
+    country_name = pop[0]
+    population = pop[1]
+    print(f"The population of {country_name} is {population:,.2f} million")
+``` 
+### Desafío: resumir obras por género
+Creamos una tabla de frecuencias para la variable género
+
+```{python}
+gender_freq = {}
+for row in moma: 
+    gender = row[5]
+    if gender not in gender_freq:
+        gender_freq[gender] = 1
+    else: 
+        gender_freq[gender] += 1
+```
+Mostramos la tabla de frecuencia para el género
+
+```{python}
+print(gender_freq)
+```
+Mostramos un resumen de cantidad de obras por género de los artistas
+
+
+```{python}
+for genero, numero in gender_freq.items():
+    print(f"There are {numero:,} artworks by {genero} artists")
+```
+## Programación orientada a objetos
+In the code editor, we have defined one variable of each of the three types. Follow each of the instructions below, in order.
+
+1. Use the print() function to display the type of the list l.
+2. Use the print() function to display the type of the string s.
+3. Use the print() function to display the type of the dictionary d.
+
+
+```{python}
+l = [1, 2, 3]
+s = "string"
+d = {"a": 1, "b": 2}
+
+print(type(l))
+print(type(s))
+print(type(d))
+```
+1. Define a class named MyClass.
+2. Inside the class definition, add a pass statement to avoid a SyntaxError.
+
+
+```{python}
+class MyClass:
+    pass
+```
+Utiliza el constructor MyClass() para crear una instancia de MyClass. Asigna esta instancia a una variable llamada my_instance.
+
+Utiliza las funciones incorporadas print() y type() para imprimir el tipo de my_instance.
+
+
+```{python}
+my_instance = MyClass()
+print(type(my_instance))
+```
+Utiliza la clase MyClass que se proporcionó anteriormente.
+Elimina la instrucción "pass".
+Dentro de la clase, crea un método llamado "first_method".
+En el método, devuelve la cadena "Este es mi primer método".
+Fuera de la clase, crea una instancia de MyClass y asígnala a una variable llamada "my_instance".
+
+
+```{python}
+class MyClass:
+    def first_method():
+        return "This is my first method"
+
+my_instance = MyClass()
+```
+Vamos a crear una clase y un método que reciba dos argumentos. 
+
+```{python}
+class MyClass:
+    
+    def first_method(self):
+        return "This is my first method"
+    
+    def return_list(self, input_list):
+        return input_list
+
+my_instance = MyClass()
+result = my_instance.return_list([1, 2, 3])
+print(result)
+```
+
+Finalmente, vamos a crear una clases con el método __init__() para inicializar unos atributos. 
+
+```{python}
+class MyList:
+    def __init__(self, initial_data):
+        self.data = initial_data
+
+my_list = MyList([1,2,3,4,5])    
+print(my_list.data)
+```
+A continuación, vamos a crear el método *append* dentro de nuestra clase
+
+```{python}
+class MyList:
+    def __init__(self, initial_data):
+        self.data = initial_data
+    
+    def append(self, new_item):
+        self.data = self.data + [new_item]
+
+my_list = MyList([1, 2, 3, 4, 5])
+
+print(my_list.data)
+
+my_list.append(6)
+
+print(my_list.data)
+```
+Finalmente, vamos a crear el método *length* para contar los elementos de una lista. Vamos a procurar que cada vez que se agregue un elemento a la lista la variable *length* se incremente en uno. 
+
+
+```{python}
+class MyList:
+
+    def __init__(self, initial_data):
+        self.data = initial_data
+        self.length = 0
+        for item in self.data:
+            self.length += 1
+
+    def append(self, new_item):
+        self.data = self.data + [new_item]
+        self.length += 1
+
+my_list = MyList([1, 1, 2, 3, 5])
+
+print(my_list.length)
+
+my_list.append(8)
+
+print(my_list.length)
+
+```
+## Fechas y horas en Python
+En este módulo vamos a trabajar analizando fechas y horas. Para esto vamos a cargar el archivo de datos correspondiente y eliminar la fila con los encabezados.
+
+
+```{python}
+from csv import reader
+opened_file = open('potus_visitors_2015.csv')
+read_file = reader(opened_file)
+potus = list(read_file)
+potus = potus[1:]
+```
+Vamos a importar el moódulo *datetime* con el alias *dt* y vamos a crear algunos objetos que incluyen fechas
+
+
+```{python}
+import datetime as dt
+ibm_founded = dt.datetime(1911,6,16)
+man_on_moon = dt.datetime(1969,7,20,20,17)
+```
+Vamos a analizar las columnas 2, 3 y 4 que son las que tienen fechas. Vamos a revisar los datos de la última fila. 
+
+```{python}
+for i in range(1,4):
+    print(potus[-1][i])
+```
+Se puede observar que la audiencia se solciitó el 16 de diciembre de 2015 y se llevó a cabo el 18 de diciembre de 2015 entre las 16:30 y las 23:59 horas. 
+
+El código que se presenta a continuación, permite estandarizar las hora a formato *datetime*
+
+
+```{python}
+date_2_str = "12-24-1984"
+date_2_dt = dt.datetime.strptime(date_2_str, "%m-%d-%Y")
+print(date_2_dt)
+```
+Las formatos de inicio y fin de las sesiones son del tipo: "%m/%d/%y %H:%M"
+
+Vamos a corregir el formato para la columna con la fecha y hora de inicio llamada "appt_start_date". 
+
+
+```{python}
+date_format = "%m/%d/%y %H:%M"
+for row in potus:
+    fecha_inicio = row[2]
+    row[2] = dt.datetime.strptime(fecha_inicio, date_format)
+```
+
+A continuación, vamos a hacer una tabla de frecuencias y formatear las fechas usando el método *datetime.strftime()*
+
+
+```{python}
+visitors_per_month = {}
+for row in potus:
+    date = row[2]
+    date = date.strftime("%B, %Y") # se cambia el formato de la fecha
+    if date in visitors_per_month:
+        visitors_per_month[date] += 1
+    else: 
+        visitors_per_month[date] = 1
+```
+
+Ahora vamos a trabajar solo con el método que permite controlar el formato de los tiempos. Vamos a tomar solo las horas del incio de las reuniones y las vamos a guardar en una lista. 
+
+```{python}
+appt_times = []
+
+for row in potus:
+    appt_dt = row[2] # captura en fortmato día y hora
+    appt_t = appt_dt.time() # captura solo el tiempo
+    appt_times.append(appt_t) # envía el tiempo a la lista
+```
+
+Ahora vamos a hacer comparaciones entre las horas. Para esto vamos a considerar la lista *appt_times* que fue creada anteriormente. 
+
+
+```{python}
+min_time = min(appt_times)
+max_time = max(appt_times)
+```
+
+De esta manera podemos obtener la hora mínima y máxima en la que fueron desarrolladas las reuniones. 
+
+También, es posible hacer operaciones matemáticas entre fechas. La suma no está permitida, pero la resta sí. Si se necesita agregar o quitar intervalos de tiempo a una fecha específica se puede usar el método *timedelta*
+
+
+```{python}
+dt_1 = dt.datetime(1981, 1, 31)
+dt_2 = dt.datetime(1984, 6, 28)
+dt_3 = dt.datetime(2016, 5, 24)
+dt_4 = dt.datetime(2001, 1, 1, 8, 24, 13)
+```
+
+Con las fechas declaradas anteriormente vamos a hacer lo siguiente: 
+
+1. Calcula el tiempo entre dt_2 y dt_1, y asigna el resultado a answer_1.
+2. Agrega 56 días a dt_3 y asigna el resultado a answer_2.
+3. Resta 3600 segundos de dt_4 y asigna el resultado a answer_3. 
+
+
+```{python}
+answer_1 = dt_2 - dt_1
+answer_2 = dt_3 + dt.timedelta(days = 56)
+answer_3 = dt_4 - dt.timedelta(seconds = 3600)
+```
+
+A continuación, vamos a realizar un análisis más profundo sobre el tiempo que duraron las reuniones. El código que se presenta a continuación, convierte la fecha y hora de término de las reuniones en formato *datetime*
+
+
+```{python}
+for row in potus:
+    end_date = row[3]
+    end_date = dt.datetime.strptime(end_date, "%m/%d/%y %H:%M")
+    row[3] = end_date
+```
+
+Vamos a crear un diccionario para guardar la duración de las reuniones y posteriormente vamos a recorrer las filas del conjunto de datos para calcular la duración de las reuniones y construir una tabla de frecuencias.  
+
+```{python}
+
+# crea la tabla de frecuencia de la duración de las reuniones
+appt_lengths = {}
+for row in potus: 
+    appt_start_date = row[2]
+    appt_end_date = row[3]
+    length = appt_end_date - appt_start_date
+    if length not in appt_lengths:
+        appt_lengths[length] = 1
+    else:
+        appt_lengths[length] += 1
+
+min_length = min(appt_lengths)
+max_length = max(appt_lengths)
+
+print(min_length)
+print(max_length)
+```
