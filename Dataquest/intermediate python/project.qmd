@@ -1,0 +1,28 @@
+## Proyecto: Explorando los artículos de Hacker News
+
+## Descripción del proyecto
+Este proyecto, titulado "Exploración de publicaciones en Hacker News", se centra en analizar un conjunto de datos que contiene publicaciones en el popular sitio web de tecnología Hacker News. Hacker News es conocido por recibir historias o "publicaciones" enviadas por usuarios, que luego son votadas y comentadas por la comunidad, de manera similar a Reddit. Este proyecto se basa en un conjunto de datos que incluye información sobre estas publicaciones, como su identificador único, título, URL, puntos (votos), comentarios, autor y fecha de envío.
+
+### Objetivos del proyecto
+El principal objetivo de este proyecto es responder a dos preguntas clave relacionadas con las publicaciones en Hacker News:
+
+1. ¿Las publicaciones que comienzan con "Ask HN" o "Show HN" reciben más comentarios en promedio?
+2. ¿Las publicaciones creadas en ciertos momentos del día reciben más comentarios en promedio?
+
+Para lograr estos objetivos, el proyecto implica las siguientes tareas:
+
+- Importar las bibliotecas necesarias.
+- Leer el archivo "hacker_news.csv" como una lista de listas.
+- Mostrar las primeras cinco filas de los datos.
+- Este proyecto servirá como una oportunidad para aplicar las habilidades adquiridas en las lecciones anteriores y obtener una comprensión más profunda de la ciencia de datos mediante el análisis de un conjunto de datos real.
+
+## Importar el archivo con datos
+La descripción de las columnas son las siguientes: 
+
+- **id:** el identificador único de Hacker News para la publicación
+- **title:** el título de la publicación
+- **url:** la URL a la que enlazan las publicaciones, si la publicación tiene una URL
+- **num_points:** el número de puntos que la publicación ha adquirido, calculado como el total de votos positivos menos el total de votos negativos
+- **num_comments:** el número de comentarios en la publicación
+- **author:** el nombre de usuario de la persona que envió la publicación
+- **created_at:** la fecha y hora de envío de la publicación
