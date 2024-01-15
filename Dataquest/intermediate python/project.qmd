@@ -26,3 +26,15 @@ La descripción de las columnas son las siguientes:
 - **num_comments:** el número de comentarios en la publicación
 - **author:** el nombre de usuario de la persona que envió la publicación
 - **created_at:** la fecha y hora de envío de la publicación
+
+
+```{python}
+# carga de los datos
+from csv import reader
+opened_file = open('hacker_news.csv')
+read_file = reader(opened_file)
+hn = list(read_file)
+hn = hn[1:] # elimina el encabezado
+for row in hn[:5]: # muestra las primera cinco filas
+    print(row)
+```
