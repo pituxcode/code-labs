@@ -1,0 +1,28 @@
+---
+title: "Título de tu Documento"
+author: "Álgebra I - Ingeniería Industrial"
+#date: "`r format(Sys.Date(), '%d de %B de %Y')`" # Fecha en formato "dd de MMMM de YYYY"
+logo: "ruta/a/tu/logo.png"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+    includes:
+      in_header: "header.tex"
+geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
+lang: es
+---
+
+# Instrucciones
+
+Aquí puedes escribir las instrucciones generales de tu guía o examen.
+
+## Pregunta 1
+
+Escribe aquí la primera pregunta o problema.
+
+## Pregunta 2
+
+Escribe aquí la segunda pregunta o problema.
+
+<!-- Repite el patrón para más preguntas -->
+
